@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 interface FormState {
-  username: string;
+  userName: string;
   password: string;
 }
 // 登录方法

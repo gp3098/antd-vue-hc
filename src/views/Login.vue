@@ -20,7 +20,7 @@
         :rules="rules"
       >
         <a-form-item>
-          <a-input v-model:value="formState.username" placeholder="Username">
+          <a-input v-model:value="formState.userName" placeholder="Username">
             <template #prefix><UserOutlined style="color: rgba(0, 0, 0, 0.25)"/></template>
           </a-input>
         </a-form-item>
@@ -33,7 +33,7 @@
           <a-button
             type="primary"
             html-type="submit"
-            :disabled="formState.username === '' || formState.password === ''"
+            :disabled="formState.userName === '' || formState.password === ''"
           >
             Log in
           </a-button>
@@ -50,7 +50,7 @@ import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
 import { defineComponent, reactive, UnwrapRef } from 'vue';
 import { login } from '@/api/login';
 interface FormState {
-  username: string;
+  userName: string;
   password: string;
 }
 export default defineComponent({
@@ -66,12 +66,12 @@ export default defineComponent({
       ],
     };
     const formState: UnwrapRef<FormState> = reactive({
-      username: 'root',
+      userName: 'root',
       password: '2020',
     });
-    const handleFinish = (values: FormState) => {
-      console.log(values, formState);
-      login(values);
+    const handleFinish = async () => {
+      const result = await login(formState);
+      console.log('login result::', result);
     };
     const handleFinishFailed = (errors: ValidateErrorEntity<FormState>) => {
       console.log(errors);
