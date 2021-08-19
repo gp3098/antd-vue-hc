@@ -1,10 +1,19 @@
 import request from '@/utils/request';
+import Cookies from 'js-cookie';
+import { AxiosResponse } from 'axios';
 interface FormState {
   userName: string;
   password: string;
 }
+interface loginDataResponse {
+  success: boolean;
+  data: {
+    token: string;
+    userName: string;
+  };
+}
 // 登录方法
-export function login(data: FormState): Promise<unknown> {
+export function login(data: FormState): Promise<AxiosResponse> {
   //   const data: FormState = { username, password, };
   return request({
     url: '/user/login',

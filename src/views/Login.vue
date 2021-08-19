@@ -47,14 +47,25 @@
 <script lang="ts">
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-import { defineComponent, reactive, UnwrapRef } from 'vue';
+import { defineComponent, reactive, UnwrapRef, Ref, ref } from 'vue';
 import { login } from '@/api/login';
+import { AxiosResponse } from 'axios';
+import { useStore } from 'vuex';
+import { setToken } from '@/utils/auth';
 interface FormState {
   userName: string;
   password: string;
 }
+interface loginDataResponse {
+  success: boolean;
+  data: {
+    token: string;
+    userName: string;
+  };
+}
 export default defineComponent({
   setup() {
+    const store = useStore();
     const rules = {
       username: [
         { required: true, message: 'Please input Activity username', trigger: 'blur' },
@@ -69,9 +80,29 @@ export default defineComponent({
       userName: 'root',
       password: '2020',
     });
+    const loading: Ref = ref(false);
     const handleFinish = async () => {
-      const result = await login(formState);
+      loading.value = true;
+      const result: AxiosResponse['data'] = await login(formState);
       console.log('login result::', result);
+      if (result) {
+        // const token: string = result?.data?.token;
+        try {
+          await store.dispatch('Login', formState);
+        } catch (error) {
+          console.log('login error: ', error);
+        }
+        // this.$store
+        //   .dispatch('Login', this.loginForm)
+        //   .then(() => {
+        //     this.$router.push({ path: this.redirect || '/' }).catch(() => {});
+        //   })
+        //   .catch(() => {
+        //     this.loading = false;
+        //     this.getCode();
+        //   });
+      }
+      loading.value = false;
     };
     const handleFinishFailed = (errors: ValidateErrorEntity<FormState>) => {
       console.log(errors);

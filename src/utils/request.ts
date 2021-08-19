@@ -1,7 +1,8 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
 // import { Notification, MessageBox, Message } from 'element-ui';
 import store from '@/store';
-// import { getToken } from '@/utils/auth';
+import { getToken } from '@/utils/auth';
 // import errorCode from '@/utils/errorCode';
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8';
@@ -16,10 +17,10 @@ const service = axios.create({
 service.interceptors.request.use(
   (config) => {
     // 是否需要设置 token
-    // const isToken = (config.headers || {}).isToken === false;
-    // if (getToken() && !isToken) {
-    //   config.headers['Authorization'] = 'Bearer ' + getToken(); // 让每个请求携带自定义token 请根据实际情况自行修改
-    // }
+    const isToken = (config.headers || {}).isToken === false;
+    if (getToken() && !isToken) {
+      config.headers['X-Auth-Token'] = getToken(); // 让每个请求携带自定义token 请根据实际情况自行修改
+    }
     // get请求映射params参数
     // if (config.method === 'get' && config.params) {
     //   let url = config.url + '?';
@@ -45,7 +46,6 @@ service.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.log(error);
     Promise.reject(error);
   }
 );
@@ -53,7 +53,7 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   (res) => {
-    console.log('res', res);
+    if (res.status === 200) return res.data;
     return res;
     // 未设置状态码则默认成功状态
     // const code = res.data.code || 200;
@@ -85,7 +85,7 @@ service.interceptors.response.use(
     // }
   },
   (error) => {
-    console.log('err' + error);
+    // console.log('err' + error);
     let { message } = error;
     if (message == 'Network Error') {
       message = '后端接口连接异常';
