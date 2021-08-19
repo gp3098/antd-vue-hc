@@ -78,7 +78,7 @@ export default defineComponent({
     };
     const formState: UnwrapRef<FormState> = reactive({
       userName: 'root',
-      password: '2020',
+      password: '2121',
     });
     const loading: Ref = ref(false);
     const handleFinish = async () => {
